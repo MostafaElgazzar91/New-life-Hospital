@@ -1,0 +1,158 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+
+struct date {
+    int day;
+    int month;
+    int year;
+};
+struct medical_history {
+    char disease_name[27];
+    int  medicine_no;
+    struct date disease_date;
+};
+struct patient {
+    int id;
+    char name[27];
+    char address[27];
+    struct date date_of_entry;
+    struct medical_history _medical_history;
+    char physician_name[27];
+    struct date last_visit;
+};
+void add_new_patient() {
+    FILE* file_pointer;
+    struct patient _patient;
+    file_pointer = fopen("patient_file.txt", "a");
+    printf("Patient ID: ");
+    scanf("%d", &_patient.id);
+    printf("Patient Name: ");
+    scanf("%s", _patient.name);
+    printf("Patient Address: ");
+    scanf("%s", _patient.address);
+    printf("Entry Day: ");
+    scanf("%d", &_patient.date_of_entry.day);
+    printf("Entry Month: ");
+    scanf("%d", &_patient.date_of_entry.month);
+    printf("Entry Year: ");
+    scanf("%d", &_patient.date_of_entry.year);
+    printf("Disease Name: ");
+    scanf("%s", _patient._medical_history.disease_name);
+    printf("Day of Disease: ");
+    scanf("%d", &_patient._medical_history.disease_date.day);
+    printf("Month of Disease: ");
+    scanf("%d", &_patient._medical_history.disease_date.month);
+    printf("Year of Disease: ");
+    scanf("%d", &_patient._medical_history.disease_date.year);
+    printf("Medicine Number: ");
+    scanf("%d", &_patient._medical_history.medicine_no);
+    printf("Physician Name: ");
+    scanf("%s", _patient.physician_name);
+    printf("Last Visit Day: ");
+    scanf("%d", &_patient.last_visit.day);
+    printf("Last Visit Month: ");
+    scanf("%d", &_patient.last_visit.month);
+    printf("Last Visit Year: ");
+    scanf("%d", &_patient.last_visit.year);
+
+    fwrite(&_patient, sizeof(_patient), 1, file_pointer);
+    fclose(file_pointer);
+}
+void search() {
+    FILE* file_pointer;
+    struct patient _patient;
+    file_pointer = fopen("patient_file.txt", "r");
+    int id;
+    int found = 0;
+    printf("Patient ID: ");
+    scanf("%d", &id);
+    while (1) {
+        fread(&_patient, sizeof(_patient), 1, file_pointer);
+
+        if (feof(file_pointer)) {
+            break;
+        }
+
+        if (_patient.id == id) {
+            found = 1;
+            printf("Patient ID: %d.\n", _patient.id);
+            printf("Patient Name: %s.\n", _patient.name);
+            printf("Patient Address: %s.\n", _patient.address);
+            printf("Entry Date day/month/year: %d/%d/%d.\n", _patient.date_of_entry.day, _patient.date_of_entry.month, _patient.date_of_entry.year);
+            printf("Disease Name", _patient._medical_history.disease_name);
+            printf("Disease Date: %d/%d/%d.\n", _patient._medical_history.disease_date.day,
+                _patient._medical_history.disease_date.month, _patient._medical_history.disease_date.year);
+            printf(" Medicine Number: %d.\n", _patient._medical_history.medicine_no);
+            printf(" Physician Name: %s.\n", _patient.physician_name);
+            printf("Last Visit Date: %d/%d/%d.\n", _patient.last_visit.day, _patient.last_visit.month, _patient.last_visit.year);
+        }
+    }
+
+    if (found == 0) {
+        printf("Invaild ID, please enter the right ID.\n");
+    }
+
+    fclose(file_pointer);
+}
+void report() {
+    FILE* file_pointer;
+    struct patient _patient;
+    char physician_name[27];
+    int found = 0;
+    file_pointer = fopen("patient_file.txt", "r");
+
+    printf("Physician Name: ");
+    scanf("%s", physician_name);
+
+    while (1) {
+        fread(&_patient, sizeof(_patient), 1, file_pointer);
+
+        if (feof(file_pointer)) {
+            break;
+        }
+        if (strncmp(_patient.physician_name, physician_name, 27) == 0) {
+            printf("%s\n", _patient.name);
+            found = 1;
+        }
+    }
+
+    if (found == 0) {
+        printf("Sorry no patient found.\n");
+    }
+
+    fclose(file_pointer);
+
+}
+int main() {
+    int menu;
+    system("color F1");
+    while (1) {
+        printf("    \n\n                              NEW LIFE HOSPTIAL                      \n\n\n\n");
+        printf("                         Enter 1 to Add New Patient.\n\n");
+        printf("                         Enter 2 fo Patient Search.\n\n");
+        printf("                         Enter 3 for Patient Reports.\n\n");
+        printf("                         Enter 4 to Exit\n\n");
+
+        scanf("%d", &menu);
+        switch (menu) {
+        case 4:
+            return 0;
+            break;
+        case 1:
+            add_new_patient();
+            break;
+        case 2:
+            search();
+            break;
+        case 3:
+            report();
+            break;
+
+        default: printf("Please enter the right number.\n");
+        }
+        getchar();
+        getchar();
+    }
+    return 0;
+}
